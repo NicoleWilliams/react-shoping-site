@@ -1,5 +1,6 @@
 function App() {
   const [melons, setMelons] = React.useState({});
+  const [shoppingCart, setShoppingCart] = React.useState({});
 
   React.useEffect(() => {
     fetch('/api/melons')
@@ -7,7 +8,21 @@ function App() {
       .then((result) => setMelons(result))
   }, [])
 
-  console.log(melons)
+  function addMelonToCart(melonCode) {
+    setShoppingCart((currentShoppingCart) => {
+      const newShoppingCart = Object.assign({}, currentShoppingCart);
+
+      if (newShoppingCart[melonCode]) {
+        newShoppingCart[melonCode] += 1;
+      } else {
+        newShoppingCart[melonCode] = 1;
+      }
+
+      return newShoppingCart;
+    })
+  }
+
+  console.log(shoppingCart)
 
   return (
     <ReactRouterDOM.BrowserRouter>
@@ -17,10 +32,10 @@ function App() {
           <Homepage />
         </ReactRouterDOM.Route>
         <ReactRouterDOM.Route exact path="/shop">
-          <AllMelonsPage melons={melons} />
+          <AllMelonsPage melons={melons} addMelonToCart={addMelonToCart} />
         </ReactRouterDOM.Route>
         <ReactRouterDOM.Route exact path="/cart">
-          <ShoppingCartPage />
+          <ShoppingCartPage melons={melons} cart={shoppingCart} />
         </ReactRouterDOM.Route>
       </div>
     </ReactRouterDOM.BrowserRouter>
